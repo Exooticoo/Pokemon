@@ -1,0 +1,1366 @@
+/* ========================================
+   PokéSoloTodo Chile — Refactored CSS
+   Modern, Responsive, Mobile-First
+   ======================================== */
+
+:root {
+    --bg-dark: #0f172a;
+    --bg-card: #1e293b;
+    --bg-card-hover: #334155;
+    --bg-glass: rgba(30, 41, 59, 0.7);
+    --primary: #ef4444;
+    --primary-hover: #dc2626;
+    --accent-yellow: #f59e0b;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --danger: #f43f5e;
+    --success: #10b981;
+    --radius: 12px;
+    --shadow-glow: 0 0 20px rgba(239, 68, 68, 0.25);
+    --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.5;
+    min-height: 100vh;
+    background-image: 
+        radial-gradient(circle at 15% 15%, rgba(239, 68, 68, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.08) 0%, transparent 40%);
+    background-attachment: fixed;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ========================================
+   Header & Navigation
+   ======================================== */
+.header {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-main);
+    flex-shrink: 0;
+}
+
+.logo-icon {
+    font-size: 1.6rem;
+    filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6));
+}
+
+.logo-accent {
+    background: linear-gradient(135deg, #ef4444, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.nav {
+    display: flex;
+    gap: 8px;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: var(--transition);
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.nav-link:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-link.active {
+    background: linear-gradient(135deg, var(--primary), #b91c1c);
+    color: white;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+/* Mobile Menu Button */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    font-size: 1.5rem;
+    padding: 6px 12px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.mobile-menu-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* ========================================
+   Pages Control
+   ======================================== */
+.main-content {
+    padding-top: 30px;
+    padding-bottom: 60px;
+}
+
+.page-content {
+    display: none;
+}
+
+.page-content.active {
+    display: block;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================
+   Hero Section
+   ======================================== */
+.hero {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 30px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-card);
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1e1b4b 100%);
+    min-height: 200px;
+}
+
+.hero-overlay {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 40px 30px;
+}
+
+.hero-title {
+    font-size: 2.2rem;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 650px;
+}
+
+.hero-subtitle strong {
+    color: var(--accent-yellow);
+    -webkit-text-fill-color: var(--accent-yellow);
+}
+
+/* ========================================
+   Filter Controls Box
+   ======================================== */
+.comp-header-box, .section-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 25px;
+    box-shadow: var(--shadow-card);
+}
+
+.comp-header-box h2, .section-box h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-box {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.search-box input {
+    flex: 1;
+    min-width: 200px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    color: var(--text-main);
+    font-size: 1rem;
+    outline: none;
+    transition: var(--transition);
+}
+
+.search-box input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.btn-search, .btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: var(--radius);
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+
+.btn-search:hover, .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* Quick Search Row */
+.quick-search-row {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Sync Status */
+.sync-status-badge {
+    font-size: 0.85rem;
+    color: var(--accent-cyan);
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.filter-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.filter-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.filter-selects {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.pill {
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    background: rgba(15, 23, 42, 0.5);
+    color: var(--text-muted);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.pill:hover {
+    color: var(--text-main);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.pill.active {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.sort-select {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.sort-select:focus {
+    border-color: var(--accent-cyan);
+}
+
+/* ========================================
+   Loading State
+   ======================================== */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+    gap: 16px;
+}
+
+.loading-state.hidden {
+    display: none;
+}
+
+.loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--border-color);
+    border-top: 4px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-state p {
+    font-size: 1rem;
+    font-weight: 600;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+/* ========================================
+   Products Grid — Responsive
+   ======================================== */
+.products-aggregator-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.product-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: var(--transition);
+    box-shadow: var(--shadow-card);
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.5), var(--shadow-glow);
+}
+
+.discount-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: linear-gradient(135deg, var(--danger), #b91c1c);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 10px rgba(244, 63, 94, 0.4);
+}
+
+/* Store info inside product card */
+.product-store-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.product-store-logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.product-store {
+    font-size: 0.8rem;
+    color: var(--accent-cyan);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.product-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    flex-grow: 1;
+    line-height: 1.4;
+}
+
+.product-expansion {
+    font-size: 0.8rem;
+    color: var(--accent-yellow);
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.price-box {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.current-price {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--accent-yellow);
+}
+
+.old-price {
+    font-size: 0.9rem;
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+.product-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.stock-status {
+    font-size: 0.85rem;
+    margin-bottom: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.stock-ok { color: var(--success); }
+.stock-out { color: var(--danger); }
+
+.btn-buy {
+    text-decoration: none;
+    padding: 10px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+    color: white;
+    border-radius: var(--radius);
+    font-weight: 700;
+    text-align: center;
+    display: block;
+    transition: var(--transition);
+}
+
+.btn-buy:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+/* No results */
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+}
+
+.no-results h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+/* ========================================
+   Pokédex Tracker — Responsive Grid
+   ======================================== */
+.pokedex-controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.pokedex-search-input {
+    flex: 1;
+    min-width: 200px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    color: var(--text-main);
+    font-size: 0.95rem;
+    outline: none;
+    transition: var(--transition);
+}
+
+.pokedex-search-input:focus {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+}
+
+.pokedex-stats-bar {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    background: rgba(15, 23, 42, 0.6);
+    padding: 15px 20px;
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.pokedex-stats-bar .stat-item {
+    font-size: 0.95rem;
+}
+
+.pokedex-stats-bar .stat-value {
+    color: var(--accent-yellow);
+    font-weight: 800;
+}
+
+.pokedex-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.poke-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 12px;
+    text-align: center;
+    transition: var(--transition);
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+}
+
+.poke-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-yellow);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.poke-card.collected {
+    border-color: var(--success);
+    background: rgba(16, 185, 129, 0.08);
+}
+
+.poke-card.collected::after {
+    content: '✓';
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    background: var(--success);
+    color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 900;
+}
+
+.poke-card img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin: 0 auto 8px;
+    display: block;
+    image-rendering: pixelated;
+}
+
+.poke-dex-number {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.poke-title {
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 2px;
+    line-height: 1.2;
+}
+
+.poke-type {
+    font-size: 0.7rem;
+    color: var(--accent-cyan);
+    font-weight: 600;
+}
+
+.poke-region-tag {
+    display: inline-block;
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+.poke-region-tag.alola { background: rgba(255, 165, 0, 0.2); color: #ffa500; }
+.poke-region-tag.galar { background: rgba(138, 43, 226, 0.2); color: #b57edc; }
+.poke-region-tag.hisui { background: rgba(0, 191, 255, 0.2); color: #00bfff; }
+.poke-region-tag.paldea { background: rgba(255, 69, 0, 0.2); color: #ff6347; }
+
+/* ========================================
+   Stores Grid — Responsive with Logo
+   ======================================== */
+.stores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.store-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    transition: var(--transition);
+}
+
+.store-card:hover {
+    border-color: var(--accent-cyan);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.store-card-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+    min-width: 0;
+}
+
+.store-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
+    flex-shrink: 0;
+    background: var(--bg-dark);
+}
+
+.store-info h3 {
+    font-size: 1.05rem;
+    margin-bottom: 4px;
+}
+
+.store-info p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.store-rating {
+    margin-top: 4px;
+    font-weight: 600;
+    color: var(--accent-yellow);
+    font-size: 0.9rem;
+}
+
+.store-card .btn-primary {
+    font-size: 0.85rem;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+/* ========================================
+   Footer
+   ======================================== */
+.footer {
+    border-top: 1px solid var(--border-color);
+    background: rgba(15, 23, 42, 0.9);
+    padding: 25px 0;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: auto;
+}
+
+/* ========================================
+   RESPONSIVE — Mobile First
+   ======================================== */
+
+/* Tablets & small screens */
+@media (max-width: 1024px) {
+    .hero-title {
+        font-size: 1.7rem;
+    }
+
+    .products-aggregator-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+
+    .pokedex-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+
+    .stores-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .header-inner {
+        height: 60px;
+    }
+
+    .nav {
+        display: none;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: rgba(15, 23, 42, 0.98);
+        backdrop-filter: blur(16px);
+        flex-direction: column;
+        padding: 16px;
+        gap: 4px;
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .nav.open {
+        display: flex;
+    }
+
+    .nav-link {
+        padding: 12px 16px;
+        border-radius: var(--radius);
+        font-size: 1rem;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .logo {
+        font-size: 1rem;
+    }
+
+    .hero {
+        min-height: 160px;
+    }
+
+    .hero-overlay {
+        padding: 24px 20px;
+    }
+
+    .hero-title {
+        font-size: 1.3rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .comp-header-box, .section-box {
+        padding: 16px;
+    }
+
+    .comp-header-box h2, .section-box h2 {
+        font-size: 1.2rem;
+    }
+
+    .search-box {
+        flex-direction: column;
+    }
+
+    .search-box input {
+        min-width: 100%;
+    }
+
+    .filter-row {
+        flex-direction: column;
+    }
+
+    .filter-selects {
+        width: 100%;
+    }
+
+    .filter-selects .sort-select {
+        flex: 1;
+    }
+
+    .products-aggregator-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 12px;
+    }
+
+    .product-card {
+        padding: 14px;
+    }
+
+    .product-title {
+        font-size: 0.9rem;
+    }
+
+    .current-price {
+        font-size: 1.2rem;
+    }
+
+    .pokedex-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 8px;
+    }
+
+    .poke-card {
+        padding: 8px;
+    }
+
+    .poke-card img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .poke-title {
+        font-size: 0.75rem;
+    }
+
+    .stores-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .store-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+
+    .store-card-left {
+        flex-direction: column;
+    }
+
+    .quick-search-row {
+        font-size: 0.8rem;
+    }
+
+    .quick-search-row .pill {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 12px;
+    }
+
+    .products-aggregator-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pokedex-grid {
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    }
+
+    .pokedex-controls {
+        flex-direction: column;
+    }
+}
+
+/* Large screens — 4-5 columns */
+@media (min-width: 1280px) {
+    .products-aggregator-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+
+    .pokedex-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    .stores-grid {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+}
+
+/* Extra large screens */
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1600px;
+    }
+
+    .products-aggregator-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .pokedex-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+}
+
+/* ========================================
+   Badges de tipo con colores oficiales
+   ======================================== */
+.poke-type {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    justify-content: center;
+}
+
+.type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+    text-transform: uppercase;
+}
+
+.type-normal { background: #A8A878; }
+.type-fuego { background: #F08030; }
+.type-agua { background: #6890F0; }
+.type-electrico { background: #E5C000; }
+.type-planta { background: #78C850; }
+.type-hielo { background: #98D8D8; color: #1e293b; text-shadow: none; }
+.type-lucha { background: #C0392B; }
+.type-veneno { background: #A040A0; }
+.type-tierra { background: #D97845; }
+.type-volador { background: #7C87E8; }
+.type-psiquico { background: #F85888; }
+.type-bicho { background: #90A418; }
+.type-roca { background: #B8A038; }
+.type-fantasma { background: #705898; }
+.type-dragon { background: #7038F8; }
+.type-siniestro { background: #6D5847; }
+.type-acero { background: #8F9FA8; }
+.type-hada { background: #EE99AC; color: #1e293b; text-shadow: none; }
+
+/* ========================================
+   Barra de progreso de captura
+   ======================================== */
+.poke-progress {
+    height: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.poke-progress-fill {
+    height: 100%;
+    min-width: 0;
+    background: linear-gradient(90deg, #22c55e, #84cc16);
+    border-radius: 999px;
+    transition: width 0.5s ease;
+}
+
+/* ========================================
+   Avatares de iniciales (tiendas/productos)
+   ======================================== */
+.avatar-initials {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: #fff;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.product-store-row .avatar-initials {
+    width: 34px;
+    height: 34px;
+    font-size: 0.65rem;
+}
+
+/* ========================================
+   Contador de resultados
+   ======================================== */
+.results-count {
+    margin-top: 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* ========================================
+   UPGRADE VISUAL — Capa moderna (overrides)
+   ======================================== */
+
+/* --- Fondo global más profundo --- */
+body {
+    background-image:
+        radial-gradient(circle at 15% 10%, rgba(239, 68, 68, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 85% 90%, rgba(59, 130, 246, 0.10) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.05) 0%, transparent 60%);
+    background-attachment: fixed;
+}
+
+/* --- Header: vidrio más pulido --- */
+.header {
+    background: rgba(15, 23, 42, 0.72);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.logo-icon {
+    animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+    0%, 100% { transform: translateY(0) rotate(-4deg); }
+    50% { transform: translateY(-3px) rotate(4deg); }
+}
+
+/* --- Hero: gradiente animado + blobs de luz --- */
+.hero {
+    min-height: 240px;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 45%, #2a1042 80%, #101033 100%);
+}
+
+.hero::before,
+.hero::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.hero::before {
+    width: 380px;
+    height: 380px;
+    left: -120px;
+    top: -140px;
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.5), transparent 65%);
+    animation: blobDrift 11s ease-in-out infinite alternate;
+}
+
+.hero::after {
+    width: 420px;
+    height: 420px;
+    right: -150px;
+    bottom: -180px;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.35), transparent 65%);
+    animation: blobDrift 14s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes blobDrift {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(70px, 40px) scale(1.18); }
+}
+
+.hero-title {
+    background: linear-gradient(120deg, #fff 25%, #fbbf24 42%, #ef4444 58%, #fff 75%);
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: titleShimmer 6s linear infinite;
+}
+
+@keyframes titleShimmer {
+    to { background-position: 220% center; }
+}
+
+/* --- Paneles y tarjetas: glassmorphism --- */
+.comp-header-box,
+.section-box,
+.product-card,
+.store-card {
+    background: rgba(30, 41, 59, 0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.comp-header-box:hover,
+.section-box:hover {
+    border-color: rgba(239, 68, 68, 0.22);
+}
+
+/* --- Tarjeta producto: elevación + brillo deslizante --- */
+.product-card {
+    overflow: hidden;
+}
+
+.product-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.08) 48%, transparent 62%);
+    transform: translateX(-110%);
+    transition: transform 0.7s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.product-card:hover::before {
+    transform: translateX(110%);
+}
+
+.product-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(239, 68, 68, 0.5);
+    box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.55), 0 0 26px rgba(239, 68, 68, 0.22);
+}
+
+.discount-badge {
+    animation: badgePulse 2.2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% { box-shadow: 0 4px 10px rgba(244, 63, 94, 0.4); }
+    50% { box-shadow: 0 4px 18px rgba(244, 63, 94, 0.75); }
+}
+
+/* --- Botones: brillo al pasar --- */
+.btn-search,
+.btn-primary {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-search::after,
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -80%;
+    width: 55%;
+    height: 100%;
+    background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.55s ease;
+}
+
+.btn-search:hover::after,
+.btn-primary:hover::after {
+    left: 130%;
+}
+
+.btn-search:active,
+.btn-primary:active {
+    transform: scale(0.96);
+}
+
+/* --- Pills con micro-lift --- */
+.pill {
+    transition: var(--transition);
+}
+
+.pill:hover {
+    transform: translateY(-2px);
+}
+
+.pill.active {
+    box-shadow: 0 0 14px rgba(239, 68, 68, 0.35);
+}
+
+/* --- Entrada escalonada de grillas --- */
+.page-content.active .products-aggregator-grid > *,
+.stores-grid > * {
+    animation: cardIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.products-aggregator-grid > *:nth-child(1) { animation-delay: 0.02s; }
+.products-aggregator-grid > *:nth-child(2) { animation-delay: 0.06s; }
+.products-aggregator-grid > *:nth-child(3) { animation-delay: 0.10s; }
+.products-aggregator-grid > *:nth-child(4) { animation-delay: 0.14s; }
+.products-aggregator-grid > *:nth-child(5) { animation-delay: 0.18s; }
+.products-aggregator-grid > *:nth-child(n+6):nth-child(-n+12) { animation-delay: 0.22s; }
+.products-aggregator-grid > *:nth-child(n+13) { animation-delay: 0.28s; }
+
+.stores-grid > *:nth-child(1) { animation-delay: 0.02s; }
+.stores-grid > *:nth-child(2) { animation-delay: 0.05s; }
+.stores-grid > *:nth-child(3) { animation-delay: 0.08s; }
+.stores-grid > *:nth-child(4) { animation-delay: 0.11s; }
+.stores-grid > *:nth-child(n+5) { animation-delay: 0.15s; }
+
+@keyframes cardIn {
+    from { opacity: 0; transform: translateY(14px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* --- Poké-cards: brillo dorado al capturar --- */
+.poke-card.collected {
+    border-color: rgba(245, 158, 11, 0.55);
+    box-shadow: 0 0 18px rgba(245, 158, 11, 0.28), inset 0 0 14px rgba(245, 158, 11, 0.10);
+}
+
+.poke-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(239, 68, 68, 0.45);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 0 18px rgba(239, 68, 68, 0.18);
+}
+
+/* --- Barra de progreso con brillo animado --- */
+.poke-progress-fill {
+    position: relative;
+    overflow: hidden;
+}
+
+.poke-progress-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
+    animation: progressShine 2.4s ease-in-out infinite;
+}
+
+@keyframes progressShine {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(100%); }
+}
+
+/* --- Avatares con anillo sutil --- */
+.avatar-initials {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06), 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: var(--transition);
+}
+
+.store-card:hover .avatar-initials {
+    transform: scale(1.08) rotate(-3deg);
+}
+
+/* --- Scrollbar temática --- */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 999px;
+    border: 2px solid var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+/* --- Accesibilidad: foco visible --- */
+:focus-visible {
+    outline: 2px solid var(--accent-yellow);
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+
+/* --- Respeto por movimiento reducido --- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001s !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001s !important;
+    }
+}
+
+/* --- Tag de otras formas (estilo neutral) --- */
+.poke-form-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    background: rgba(148, 163, 184, 0.15);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    color: #cbd5e1;
+}
+
+/* --- Badge de tienda con precios automáticos --- */
+.store-auto-badge {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    color: #34d399;
+}

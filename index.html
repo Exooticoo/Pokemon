@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PokéSoloTodo Chile 🇨🇱 — Buscador de Precios Pokémon TCG</title>
+    <meta name="description" content="Encuentra productos de Pokémon TCG en Chile con precios reales de tiendas verificadas. Buscador, Pokédex Tracker y directorio de tiendas.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header class="header" id="header">
+        <div class="container header-inner">
+            <a href="javascript:void(0)" class="logo" id="logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">Poké<span class="logo-accent">SoloTodo Chile 🇨🇱</span></span>
+            </a>
+            <nav class="nav" id="mainNav">
+                <a href="javascript:void(0)" class="nav-link tab-link active" data-page="home">🔎 Buscador de Productos</a>
+                <a href="javascript:void(0)" class="nav-link tab-link" data-page="pokedex">📕 Mi Pokédex</a>
+                <a href="javascript:void(0)" class="nav-link tab-link" data-page="tiendas">🏬 Tiendas Verificadas</a>
+            </nav>
+            <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menú">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content container">
+        <!-- PAGE 1: BUSCADOR PRINCIPAL DE PRODUCTOS (HOME) -->
+        <section class="page-content active" id="page-home">
+            <div class="hero">
+                <div class="hero-overlay">
+                    <h1 class="hero-title">Encuentra Productos de Pokémon TCG en Tiendas de Chile</h1>
+                    <p class="hero-subtitle">Busca productos con <strong>precios reales</strong> de tiendas verificadas, compara y accede con <strong>enlaces directos</strong> para comprar.</p>
+                </div>
+            </div>
+
+            <div class="comp-header-box">
+                <h2>🔎 Buscador Directo de Productos TCG</h2>
+                
+                <div class="search-box">
+                    <input type="text" id="productSearchInput" placeholder="Buscar por producto, set o tienda (ej: Ascended Heroes, Surging Sparks, 151, ETB)...">
+                    <button type="button" id="productSearchBtn" class="btn-search">Buscar 🔍</button>
+                    <button type="button" id="manualSyncBtn" class="btn-primary" style="background: linear-gradient(135deg, #06b6d4, #3b82f6);">🔄 Actualizar Precios</button>
+                </div>
+
+                <!-- Búsqueda Rápida de Expansiones Populares -->
+                <div class="quick-search-row">
+                    <strong>Búsquedas Rápidas:</strong>
+                    <button type="button" onclick="quickSearch('Ascended Heroes')" class="pill" style="border-color: var(--accent-yellow); color: var(--accent-yellow);">🔥 Ascended Heroes</button>
+                    <button type="button" onclick="quickSearch('Surging Sparks')" class="pill">⚡ Surging Sparks</button>
+                    <button type="button" onclick="quickSearch('151')" class="pill">🔴 Pokémon 151</button>
+                    <button type="button" onclick="quickSearch('Prismatic Evolutions')" class="pill">✨ Prismatic Evolutions</button>
+                    <button type="button" onclick="quickSearch('Delta Reign')" class="pill">🌀 Delta Reign</button>
+                </div>
+
+                <div id="syncStatusBadge" class="sync-status-badge"></div>
+
+                <div class="filter-row">
+                    <div class="filter-pills" id="featureFilters">
+                        <button type="button" class="pill active" data-filter="all">Todos los Productos</button>
+                        <button type="button" class="pill" data-filter="discount">En Oferta 🔥</button>
+                        <button type="button" class="pill" data-filter="instock">Con Stock ✅</button>
+                        <button type="button" class="pill" data-filter="spanish">Español 🇪🇸</button>
+                        <button type="button" class="pill" data-filter="english">Inglés 🇺🇸</button>
+                    </div>
+
+                    <div class="filter-selects">
+                        <select id="expansionSelect" class="sort-select">
+                            <option value="all">📦 Todas las Expansiones</option>
+                        </select>
+
+                        <select id="sortSelect" class="sort-select">
+                            <option value="popular">🔥 Más Populares</option>
+                            <option value="price-asc">💵 Menor a Mayor Precio</option>
+                            <option value="price-desc">💎 Mayor a Menor Precio</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="resultsCount" class="results-count"></div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="productsLoadingState" class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Cargando precios reales de tiendas...</p>
+            </div>
+
+            <!-- Grilla Principal de Productos Buscados -->
+            <div class="products-aggregator-grid" id="homeProductsGrid"></div>
+        </section>
+
+        <!-- PAGE 2: POKÉDEX TRACKER -->
+        <section class="page-content" id="page-pokedex">
+            <div class="section-box">
+                <h2>📕 Pokédex Collector Tracker</h2>
+                <p style="color: var(--text-muted); margin-bottom: 15px;">Lleva el registro de los Pokémon que has capturado o coleccionado. Gen 1 a Gen 9, incluyendo formas regionales.</p>
+                
+                <div class="pokedex-controls">
+                    <input type="text" id="pokedexSearchInput" placeholder="Buscar Pokémon por nombre o número..." class="pokedex-search-input">
+                    <select id="pokedexGenFilter" class="sort-select">
+                        <option value="all">Todas las Generaciones</option>
+                        <option value="1">Gen 1 — Kanto (#001-#151)</option>
+                        <option value="2">Gen 2 — Johto (#152-#251)</option>
+                        <option value="3">Gen 3 — Hoenn (#252-#386)</option>
+                        <option value="4">Gen 4 — Sinnoh (#387-#493)</option>
+                        <option value="5">Gen 5 — Unova (#494-#649)</option>
+                        <option value="6">Gen 6 — Kalos (#650-#721)</option>
+                        <option value="7">Gen 7 — Alola (#722-#809)</option>
+                        <option value="8">Gen 8 — Galar (#810-#905)</option>
+                        <option value="9">Gen 9 — Paldea (#906-#1025)</option>
+                        <option value="regional">Formas Regionales</option>
+                        <option value="forms">Otras Formas</option>
+                    </select>
+                    <button type="button" id="pokedexCollectedBtn" class="pill" title="Mostrar solo Pokémon capturados">✅ Capturados</button>
+                    <button type="button" id="pokedexMissingBtn" class="pill" title="Mostrar solo Pokémon por capturar">⭕ Por Capturar</button>
+                </div>
+
+                <div id="pokedexStats"></div>
+
+                <!-- Loading State -->
+                <div id="pokedexLoadingState" class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p>Cargando Pokédex...</p>
+                </div>
+
+                <div class="pokedex-grid" id="pokedexGrid"></div>
+            </div>
+        </section>
+
+        <!-- PAGE 3: TIENDAS VERIFICADAS -->
+        <section class="page-content" id="page-tiendas">
+            <div class="section-box">
+                <h2>🏬 Directorio de Tiendas Verificadas en Chile</h2>
+                <p style="color: var(--text-muted);">Compramos y auditamos constantemente las tiendas físicas y virtuales con stock real de Pokémon TCG en Chile.</p>
+                <div class="pokedex-controls">
+                    <input type="text" id="storeSearchInput" class="pokedex-search-input" placeholder="Buscar tienda por nombre o ciudad...">
+                </div>
+                <div class="stores-grid" id="storesGrid"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 PokéSoloTodo Chile 🇨🇱. No afiliado con Nintendo ni The Pokémon Company. Todos los enlaces dirigen a las tiendas oficiales chilenas.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
