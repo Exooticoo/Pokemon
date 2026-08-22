@@ -18,10 +18,23 @@ El catálogo **nunca se edita a mano**:
 ```bash
 node scripts/build-catalog.mjs     # regenera productos.json desde los feeds de las tiendas
 node scripts/update-prices.mjs     # refresca precios/stock diariamente (match exacto por URL)
-powershell -File scripts/install-task.ps1   # agenda el bot diario en Windows
+powershell -File scripts/install-task.ps1   # agenda el bot diario en Windows (opcional)
 ```
 
+## Actualización automática (GitHub Actions)
+El repo se mantiene solo: `.github/workflows/actualizar.yml` ejecuta el bot en los servidores de GitHub.
+
+| Cuándo | Qué hace |
+|---|---|
+| Todos los días ~10:00 AM Chile | Refresca precio/stock (`update-prices`) |
+| Domingos + botón manual | Reconstruye catálogo completo con nuevos productos (`build-catalog`) |
+
+Si cambió algo, hace commit de `productos.json` y GitHub Pages republica automáticamente. Tu PC no necesita estar encendido.
+
+**Activación**: sube la carpeta `.github/` junto al resto de archivos y en *Settings → Actions → General → Workflow permissions* marca **Read and write permissions**. Para forzar una pasada: pestaña *Actions → Actualizar Precios → Run workflow*.
+
 ## Deploy (GitHub Pages)
-1. Sube al repo: `index.html`, `app.js`, `styles.css`, `productos.json`, `pokedex.json`
+1. Sube al repo: `index.html`, `app.js`, `styles.css`, `productos.json`, `pokedex.json`, `.nojekyll` y `.github/workflows/actualizar.yml`
 2. Activa *Settings → Pages → Deploy from branch → main / root*
-3. Listo en ~1 minuto.
+3. Listo en ~1 minuto. Después el bot lo actualiza solo cada día.
+

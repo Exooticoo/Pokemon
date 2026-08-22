@@ -1,0 +1,46 @@
+name: Actualizar Precios
+
+# El bot corre en los servidores de GitHub y republica el sitio solo.
+# - Diario ~10:00 AM Chile: refresca precio/stock por URL exacta.
+# - Domingos + botón manual: reconstruye el catálogo completo (nuevos productos).
+on:
+  schedule:
+    - cron: '0 13 * * *'   # diario 13:00 UTC ≈ 09:00-10:00 Chile
+    - cron: '0 14 * * 0'   # domingos 14:00 UTC: catálogo completo
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Catálogo completo (domingos o ejecución manual)
+      - name: Reconstruir catalogo completo
+        if: github.event.schedule == '0 14 * * 0' || github.event_name == 'workflow_dispatch'
+        run: node scripts/build-catalog.mjs
+
+      # Solo precios (días normales; en domingos/manual el catálogo ya trae precios frescos)
+      - name: Actualizar precios
+        if: github.event_name != 'workflow_dispatch' && github.event.schedule != '0 14 * * 0'
+        run: node scripts/update-prices.mjs
+
+      # Publicar cambios (dispara el redeploy de GitHub Pages automáticamente)
+      - name: Commit y push si hubo cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add productos.json
+          if git diff --cached --quiet; then
+            echo "Sin cambios hoy"
+          else
+            git commit -m "🤖 Precios actualizados $(date -u +%Y-%m-%d)"
+            git push
+          fi
