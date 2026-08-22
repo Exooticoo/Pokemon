@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PokéSoloTodo Chile 🇨🇱 — Buscador de Precios Pokémon TCG</title>
-    <meta name="description" content="Encuentra productos de Pokémon TCG en Chile con precios reales de tiendas verificadas. Buscador, Pokédex Tracker y directorio de tiendas.">
+    <title>PokeRadar 🇨🇱 — Comparador de Precios Pokémon TCG</title>
+    <meta name="description" content="PokeRadar: encuentra productos de Pokémon TCG en Chile con precios reales y fotos de 5 tiendas verificadas. Compara, filtra por tienda y compra con enlaces directos.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Ccircle cx='22' cy='22' r='20' fill='%230f172a' stroke='%23f59e0b' stroke-width='2.5'/%3E%3Cpath d='M2.5,22a19.5,19.5 0 0 1 39,0z' fill='%23ef4444'/%3E%3Ccircle cx='22' cy='22' r='6' fill='%230f172a' stroke='%23f8fafc' stroke-width='2.5'/%3E%3Ccircle cx='22' cy='22' r='2.2' fill='%23f8fafc'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,9 +13,17 @@
     <!-- Header Navigation -->
     <header class="header" id="header">
         <div class="container header-inner">
-            <a href="javascript:void(0)" class="logo" id="logo">
-                <span class="logo-icon">⚡</span>
-                <span class="logo-text">Poké<span class="logo-accent">SoloTodo Chile 🇨🇱</span></span>
+            <a href="javascript:void(0)" class="logo" id="logo" title="Volver al inicio">
+                <span class="logo-icon">
+                    <svg class="logo-svg" viewBox="0 0 44 44" width="34" height="34" aria-hidden="true">
+                        <circle cx="22" cy="22" r="20" fill="#0f172a" stroke="#f59e0b" stroke-width="2.5"/>
+                        <path d="M2.5,22a19.5,19.5 0 0 1 39,0z" fill="#ef4444"/>
+                        <rect x="3" y="19.5" width="38" height="5" rx="2.5" fill="#0f172a" stroke="#f8fafc" stroke-width="1.6"/>
+                        <circle cx="22" cy="22" r="6" fill="#0f172a" stroke="#f8fafc" stroke-width="2.5"/>
+                        <circle cx="22" cy="22" r="2.4" fill="#f8fafc"/>
+                    </svg>
+                </span>
+                <span class="logo-text">Poke<span class="logo-accent">Radar 🇨🇱</span></span>
             </a>
             <nav class="nav" id="mainNav">
                 <a href="javascript:void(0)" class="nav-link tab-link active" data-page="home">🔎 Buscador de Productos</a>
@@ -30,8 +39,9 @@
         <section class="page-content active" id="page-home">
             <div class="hero">
                 <div class="hero-overlay">
-                    <h1 class="hero-title">Encuentra Productos de Pokémon TCG en Tiendas de Chile</h1>
-                    <p class="hero-subtitle">Busca productos con <strong>precios reales</strong> de tiendas verificadas, compara y accede con <strong>enlaces directos</strong> para comprar.</p>
+                    <h1 class="hero-title">Radar de Precios Pokémon TCG en Chile</h1>
+                    <p class="hero-subtitle"><strong>PokeRadar</strong> escanea las tiendas verificadas y te muestra <strong>precios reales con fotos</strong>. Compara, filtra por tienda y compra directo.</p>
+                    <div id="heroStats" class="hero-stats"></div>
                 </div>
             </div>
 
@@ -44,15 +54,8 @@
                     <button type="button" id="manualSyncBtn" class="btn-primary" style="background: linear-gradient(135deg, #06b6d4, #3b82f6);">🔄 Actualizar Precios</button>
                 </div>
 
-                <!-- Búsqueda Rápida de Expansiones Populares -->
-                <div class="quick-search-row">
-                    <strong>Búsquedas Rápidas:</strong>
-                    <button type="button" onclick="quickSearch('Ascended Heroes')" class="pill" style="border-color: var(--accent-yellow); color: var(--accent-yellow);">🔥 Ascended Heroes</button>
-                    <button type="button" onclick="quickSearch('Surging Sparks')" class="pill">⚡ Surging Sparks</button>
-                    <button type="button" onclick="quickSearch('151')" class="pill">🔴 Pokémon 151</button>
-                    <button type="button" onclick="quickSearch('Prismatic Evolutions')" class="pill">✨ Prismatic Evolutions</button>
-                    <button type="button" onclick="quickSearch('Delta Reign')" class="pill">🌀 Delta Reign</button>
-                </div>
+                <!-- Últimas búsquedas (generadas por JS desde localStorage) -->
+                <div class="quick-search-row" id="quickSearchRow"></div>
 
                 <div id="syncStatusBadge" class="sync-status-badge"></div>
 
@@ -61,11 +64,24 @@
                         <button type="button" class="pill active" data-filter="all">Todos los Productos</button>
                         <button type="button" class="pill" data-filter="discount">En Oferta 🔥</button>
                         <button type="button" class="pill" data-filter="instock">Con Stock ✅</button>
+                        <button type="button" class="pill" data-filter="favorites">Solo Favoritos ♥</button>
                         <button type="button" class="pill" data-filter="spanish">Español 🇪🇸</button>
                         <button type="button" class="pill" data-filter="english">Inglés 🇺🇸</button>
                     </div>
 
+                    <div class="price-range-row">
+                        <label>💰 Precio:</label>
+                        <input type="number" id="priceMinInput" min="0" step="500" placeholder="Mín $">
+                        <span>—</span>
+                        <input type="number" id="priceMaxInput" min="0" step="500" placeholder="Máx $">
+                        <button type="button" id="clearPriceBtn" class="pill" title="Limpiar rango">✕ Limpiar</button>
+                    </div>
+
                     <div class="filter-selects">
+                        <select id="storeSelect" class="sort-select">
+                            <option value="all">🏪 Todas las Tiendas</option>
+                        </select>
+
                         <select id="expansionSelect" class="sort-select">
                             <option value="all">📦 Todas las Expansiones</option>
                         </select>
@@ -74,6 +90,7 @@
                             <option value="popular">🔥 Más Populares</option>
                             <option value="price-asc">💵 Menor a Mayor Precio</option>
                             <option value="price-desc">💎 Mayor a Menor Precio</option>
+                            <option value="discount">🏷️ Mayor Descuento</option>
                         </select>
                     </div>
                 </div>
@@ -89,6 +106,9 @@
 
             <!-- Grilla Principal de Productos Buscados -->
             <div class="products-aggregator-grid" id="homeProductsGrid"></div>
+
+            <!-- Paginación -->
+            <nav class="pagination-bar" id="paginationBar" aria-label="Paginación de productos"></nav>
         </section>
 
         <!-- PAGE 2: POKÉDEX TRACKER -->
@@ -145,7 +165,8 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 PokéSoloTodo Chile 🇨🇱. No afiliado con Nintendo ni The Pokémon Company. Todos los enlaces dirigen a las tiendas oficiales chilenas.</p>
+            <p><strong>PokeRadar</strong> 🛰️ es un buscador independiente de ofertas. No afiliado con Nintendo ni The Pokémon Company.</p>
+            <p style="margin-top: 6px; font-size: 0.85rem;">Precios y fotos referenciales provistos por cada tienda — verifica disponibilidad al comprar. © 2026</p>
         </div>
     </footer>
 

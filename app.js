@@ -31,6 +31,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Logo → vuelve al Home
+    const logoLink = document.getElementById('logo');
+    if (logoLink) {
+        logoLink.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            pages.forEach(p => p.classList.remove('active'));
+            const homeTab = document.querySelector('.tab-link[data-page="home"]');
+            const homePage = document.getElementById('page-home');
+            if (homeTab) homeTab.classList.add('active');
+            if (homePage) homePage.classList.add('active');
+            if (mainNav) mainNav.classList.remove('open');
+        });
+    }
+
     // Placeholder seguro (Data URI) que nunca genera errores de red ni bucles
     const DEFAULT_POKE_ICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%231e293b' stroke='%23ef4444' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='2' y1='12' x2='22' y2='12'/%3E%3Ccircle cx='12' cy='12' r='3' fill='%23ef4444'/%3E%3C/svg%3E";
 
@@ -107,7 +121,59 @@ document.addEventListener('DOMContentLoaded', () => {
         return `<div class="avatar-initials" style="background:hsl(${hue}, 45%, 42%)">${initials}</div>`;
     }
 
-    const state = { searchQuery: '', sortBy: 'popular', activeFilter: 'all', expansionFilter: 'all' };
+    const state = { searchQuery: '', sortBy: 'popular', activeFilter: 'all', expansionFilter: 'all', storeFilter: 'all', priceMin: null, priceMax: null, page: 1 };
+    const PAGE_SIZE = 24;
+
+    // Favoritos persistentes
+    let favorites = new Set(JSON.parse(localStorage.getItem('poke_favorites_v1') || '[]'));
+
+    const CATEGORY_LABELS = {
+        etb: 'ETB', 'caja-sobres': 'Caja de Sobres', bundle: 'Bundle', tin: 'Tin',
+        blister: 'Blister', coleccion: 'Colección', deck: 'Deck', booster: 'Booster',
+        accesorio: 'Accesorio', otro: 'Sellado'
+    };
+
+    // --- Últimas búsquedas (localStorage) ---
+    const RECENT_KEY = 'poke_recent_searches';
+
+    function getRecentSearches() {
+        try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); }
+        catch { return []; }
+    }
+
+    function pushRecentSearch(q) {
+        const term = String(q || '').trim();
+        if (!term) return;
+        const list = getRecentSearches().filter(x => x.toLowerCase() !== term.toLowerCase());
+        list.unshift(term);
+        localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, 6)));
+        renderRecentSearches();
+    }
+
+    function renderRecentSearches() {
+        const row = document.getElementById('quickSearchRow');
+        if (!row) return;
+        const list = getRecentSearches();
+        if (list.length === 0) {
+            row.innerHTML = `<strong>Búsquedas Rápidas:</strong> <span style="color: var(--text-muted);">tus últimas búsquedas aparecerán aquí</span>`;
+            return;
+        }
+        row.innerHTML = '<strong>Últimas Búsquedas:</strong>' +
+            list.map(q => `<button type="button" data-q="${q.replace(/"/g, '&quot;')}" class="pill">🕐 ${q}</button>`).join('') +
+            `<button type="button" id="clearRecentBtn" class="pill" title="Limpiar historial">✕</button>`;
+    }
+
+    // Llena el selector de tiendas desde los datos cargados
+    function populateStoreSelect() {
+        const storeSelect = document.getElementById('storeSelect');
+        if (!storeSelect) return;
+        const current = state.storeFilter;
+        const stores = [...new Set(productsDB.map(p => p.store).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'es'));
+        storeSelect.innerHTML = `<option value="all">🏪 Todas las Tiendas</option>` +
+            stores.map(s => `<option value="${s}">${s}</option>`).join('');
+        storeSelect.value = stores.includes(current) ? current : 'all';
+        state.storeFilter = storeSelect.value;
+    }
 
     // Llena el selector de expansiones desde los datos cargados (nunca hardcodeado)
     function populateExpansionSelect() {
@@ -118,6 +184,21 @@ document.addEventListener('DOMContentLoaded', () => {
             expansions.map(e => `<option value="${e}">${e}</option>`).join('');
         expansionSelect.value = expansions.includes(current) ? current : 'all';
         state.expansionFilter = expansionSelect.value;
+    }
+
+    // Chips de stats del héroe
+    function renderHeroStats() {
+        const heroStats = document.getElementById('heroStats');
+        if (!heroStats || !productsLoaded) return;
+        const nStores = new Set(productsDB.map(p => p.store)).size;
+        const inStock = productsDB.filter(p => p.inStock).length;
+        const today = new Date().toISOString().split('T')[0];
+        heroStats.innerHTML = `
+            <span class="hero-chip">🛰️ ${productsDB.length} productos</span>
+            <span class="hero-chip">🏪 ${nStores} tiendas verificadas</span>
+            <span class="hero-chip">✅ ${inStock} con stock ahora</span>
+            <span class="hero-chip">📅 actualizado ${today}</span>
+        `;
     }
 
     async function loadProducts() {
@@ -138,9 +219,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             console.warn('Carga asíncrona de productos.json (usando respaldo si aplica):', err.message);
             productsDB = [
-                { id: 1, title: "Elite Trainer Box Mega Evolution", store: "Charizstore", price: 69990, oldPrice: null, inStock: true, lang: null, category: "etb", expansion: "Mega Evolución / Mega Evolution", popularity: 1, link: "https://charizstore.cl", lastUpdated: "2026-08-22" },
-                { id: 2, title: "Pokémon TCG – Sleeved Booster Pack", store: "DeckSwap Chile", price: 6990, oldPrice: null, inStock: true, lang: "ENG", category: "booster", expansion: "Otras Expansiones", popularity: 2, link: "https://deckswap.cl", lastUpdated: "2026-08-22" },
-                { id: 3, title: "Booster Box (Escarlata y Púrpura)", store: "AFK Store", price: 149990, oldPrice: null, inStock: false, lang: null, category: "caja-sobres", expansion: "Escarlata y Púrpura", popularity: 3, link: "https://afkstore.cl", lastUpdated: "2026-08-22" }
+                { id: 1, title: "Elite Trainer Box Mega Evolution", store: "Charizstore", price: 69990, oldPrice: null, inStock: true, image: null, lang: null, category: "etb", expansion: "Mega Evolución / Mega Evolution", popularity: 1, link: "https://charizstore.cl", lastUpdated: "2026-08-22" },
+                { id: 2, title: "Pokémon TCG – Sleeved Booster Pack", store: "DeckSwap Chile", price: 6990, oldPrice: null, inStock: true, image: null, lang: "ENG", category: "booster", expansion: "Otras Expansiones", popularity: 2, link: "https://deckswap.cl", lastUpdated: "2026-08-22" },
+                { id: 3, title: "Booster Box (Escarlata y Púrpura)", store: "AFK Store", price: 149990, oldPrice: null, inStock: false, image: null, lang: null, category: "caja-sobres", expansion: "Escarlata y Púrpura", popularity: 3, link: "https://afkstore.cl", lastUpdated: "2026-08-22" }
             ];
             productsLoaded = true;
 
@@ -150,6 +231,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } finally {
             if (productsLoadingState) productsLoadingState.classList.add('hidden');
             populateExpansionSelect();
+            populateStoreSelect();
+            renderHeroStats();
             renderProducts();
         }
     }
@@ -180,9 +263,19 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        // Store filter
+        if (state.storeFilter !== 'all') {
+            filtered = filtered.filter(p => p.store === state.storeFilter);
+        }
+
+        // Price range
+        if (state.priceMin !== null) filtered = filtered.filter(p => p.price >= state.priceMin);
+        if (state.priceMax !== null) filtered = filtered.filter(p => p.price <= state.priceMax);
+
         // Feature filters
         if (state.activeFilter === 'discount') filtered = filtered.filter(p => p.oldPrice && p.oldPrice > p.price);
         else if (state.activeFilter === 'instock') filtered = filtered.filter(p => p.inStock);
+        else if (state.activeFilter === 'favorites') filtered = filtered.filter(p => favorites.has(String(p.id)));
         else if (state.activeFilter === 'english') filtered = filtered.filter(p => p.lang === 'ENG');
         else if (state.activeFilter === 'spanish') filtered = filtered.filter(p => p.lang === 'ESP');
 
@@ -190,6 +283,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (state.sortBy === 'price-asc') filtered.sort((a, b) => a.price - b.price);
         else if (state.sortBy === 'price-desc') filtered.sort((a, b) => b.price - a.price);
         else if (state.sortBy === 'popular') filtered.sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+        else if (state.sortBy === 'discount') {
+            filtered.sort((a, b) => {
+                const disc = p => (p.oldPrice && p.oldPrice > p.price) ? (p.oldPrice - p.price) / p.oldPrice : -1;
+                return disc(b) - disc(a);
+            });
+        }
 
         return filtered;
     }
@@ -198,16 +297,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasDiscount = product.oldPrice && product.oldPrice > product.price;
         const stockClass = product.inStock ? 'stock-ok' : 'stock-out';
         const stockText = product.inStock ? '✅ En Stock' : '❌ Agotado';
+        const isFav = favorites.has(String(product.id));
+        const catLabel = CATEGORY_LABELS[product.category] || 'Sellado';
+        const imgHtml = product.image
+            ? `<img src="${product.image}" alt="${product.title.replace(/"/g, '&quot;')}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+               <div class="product-image-fallback" style="display:none;">🎴</div>`
+            : `<div class="product-image-fallback">🎴</div>`;
 
         return `
             <div class="product-card">
                 ${hasDiscount ? `<span class="discount-badge">🔥 Oferta</span>` : ''}
+                <button type="button" class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite(${product.id})" title="${isFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}">${isFav ? '♥' : '♡'}</button>
+                <div class="product-image-wrap">${imgHtml}</div>
                 <div class="product-store-row">
                     ${initialsAvatar(product.store)}
                     <span class="product-store">${product.store}${product.lang ? ` • [${product.lang}]` : ''}</span>
                 </div>
                 <h3 class="product-title">${product.title}</h3>
-                <div class="product-expansion">Set: ${product.expansion}</div>
+                <div class="product-chips">
+                    <span class="category-chip">${catLabel}</span>
+                    <span class="expansion-chip">Set: ${product.expansion}</span>
+                </div>
                 <div class="price-box">
                     <span class="current-price">${formatCLP(product.price)}</span>
                     ${hasDiscount ? `<span class="old-price">${formatCLP(product.oldPrice)}</span>` : ''}
@@ -228,27 +338,75 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtered = getFilteredProducts();
 
         const resultsCount = document.getElementById('resultsCount');
-        if (resultsCount) resultsCount.textContent = `Mostrando ${filtered.length} de ${productsDB.length} productos`;
+        if (resultsCount) resultsCount.textContent = `Mostrando ${Math.min(filtered.length, PAGE_SIZE)} de ${filtered.length} productos`;
 
-        if (filtered.length === 0) {
-            const msg = productsDB.length === 0
-                ? `<h3>📭 No hay productos disponibles</h3><p style="margin-top: 10px;">El archivo <code>productos.json</code> se generará automáticamente por el scraper.</p>`
-                : `<h3>🕵️‍♂️ No se encontraron productos para "${state.searchQuery || state.expansionFilter}"</h3><p style="margin-top: 10px;">Prueba seleccionando otra expansión o término de búsqueda.</p>`;
+        // Paginación
+        const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+        state.page = Math.min(Math.max(1, state.page), totalPages);
+        const pageItems = filtered.slice((state.page - 1) * PAGE_SIZE, state.page * PAGE_SIZE);
+        renderPagination(filtered.length, totalPages);
 
+        if (pageItems.length === 0) {
+            let msg;
+            if (productsDB.length === 0) {
+                msg = `<h3>📭 No hay productos disponibles</h3><p style="margin-top: 10px;">El archivo <code>productos.json</code> se genera automáticamente con <code>scripts/build-catalog.mjs</code>.</p>`;
+            } else if (state.activeFilter === 'favorites' && favorites.size === 0) {
+                msg = `<h3>♥ Aún no tienes favoritos</h3><p style="margin-top: 10px;">Toca el ♡ en cualquier producto para guardarlo aquí.</p>`;
+            } else {
+                msg = `<h3>🕵️‍♂️ No se encontraron productos</h3><p style="margin-top: 10px;">Prueba otra búsqueda, expansión o tienda.</p>`;
+            }
             homeProductsGrid.innerHTML = `<div class="no-results">${msg}</div>`;
         } else {
-            homeProductsGrid.innerHTML = filtered.map(renderProductCardHtml).join('');
+            homeProductsGrid.innerHTML = pageItems.map(renderProductCardHtml).join('');
         }
     }
 
-    // Quick search from pills
+    function renderPagination(totalItems, totalPages) {
+        const bar = document.getElementById('paginationBar');
+        if (!bar) return;
+        if (totalPages <= 1) { bar.innerHTML = ''; return; }
+
+        const current = state.page;
+        let pages = [];
+        if (totalPages <= 7) {
+            pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+        } else {
+            pages = [1];
+            for (let p = Math.max(2, current - 1); p <= Math.min(totalPages - 1, current + 1); p++) pages.push(p);
+            if (current > totalPages - 2) pages.push(totalPages - 1);
+            if (current < 3) pages.push(2, 3);
+            pages.push(totalPages);
+            pages = [...new Set(pages)].sort((a, b) => a - b);
+        }
+
+        let html = `<button type="button" class="page-btn" data-page="${current - 1}" ${current === 1 ? 'disabled' : ''}>‹</button>`;
+        let last = 0;
+        for (const p of pages) {
+            if (p - last > 1) html += '<span class="page-ellipsis">…</span>';
+            html += `<button type="button" class="page-btn ${p === current ? 'active' : ''}" data-page="${p}">${p}</button>`;
+            last = p;
+        }
+        html += `<button type="button" class="page-btn" data-page="${current + 1}" ${current === totalPages ? 'disabled' : ''}>›</button>`;
+        html += `<span class="page-info">${totalItems} productos</span>`;
+        bar.innerHTML = html;
+    }
+
+    window.goToPage = (n) => {
+        state.page = n;
+        renderProducts();
+        homeProductsGrid?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    // Quick search from pills (también registra en últimas búsquedas)
     window.quickSearch = (term) => {
         if (searchInput) searchInput.value = term;
         state.searchQuery = term;
+        pushRecentSearch(term);
+        resetToFirstPage();
         if (expansionSelect) expansionSelect.value = 'all';
         state.expansionFilter = 'all';
         renderProducts();
-        
+
         // Show home tab safely without synthetic click
         tabs.forEach(t => t.classList.remove('active'));
         pages.forEach(p => p.classList.remove('active'));
@@ -258,18 +416,37 @@ document.addEventListener('DOMContentLoaded', () => {
         if (homePage) homePage.classList.add('active');
     };
 
+    // Favoritos (global: se llama desde onclick inline)
+    window.toggleFavorite = (productId) => {
+        const key = String(productId);
+        if (favorites.has(key)) favorites.delete(key);
+        else favorites.add(key);
+        localStorage.setItem('poke_favorites_v1', JSON.stringify([...favorites]));
+        renderProducts();
+    };
+
+    // Vuelve a la página 1 cuando cambian los filtros
+    function resetToFirstPage() {
+        state.page = 1;
+    }
+
     // Event listeners for filters
     if (searchInput) {
-        searchInput.addEventListener('input', (e) => { 
-            state.searchQuery = e.target.value; 
-            renderProducts(); 
+        searchInput.addEventListener('input', (e) => {
+            state.searchQuery = e.target.value;
+            resetToFirstPage();
+            renderProducts();
+        });
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target.value.trim()) pushRecentSearch(e.target.value);
         });
     }
 
     if (sortSelect) {
-        sortSelect.addEventListener('change', (e) => { 
-            state.sortBy = e.target.value; 
-            renderProducts(); 
+        sortSelect.addEventListener('change', (e) => {
+            state.sortBy = e.target.value;
+            resetToFirstPage();
+            renderProducts();
         });
     }
 
@@ -280,9 +457,63 @@ document.addEventListener('DOMContentLoaded', () => {
                 searchInput.value = '';
                 state.searchQuery = '';
             }
+            resetToFirstPage();
             renderProducts();
         });
     }
+
+    // Filtro por tienda
+    const storeSelect = document.getElementById('storeSelect');
+    if (storeSelect) {
+        storeSelect.addEventListener('change', (e) => {
+            state.storeFilter = e.target.value;
+            resetToFirstPage();
+            renderProducts();
+        });
+    }
+
+    // Rango de precio
+    const priceMinInput = document.getElementById('priceMinInput');
+    const priceMaxInput = document.getElementById('priceMaxInput');
+    const parsePrice = (v) => {
+        const n = parseInt(String(v).replace(/[^\d]/g, ''), 10);
+        return Number.isFinite(n) && n >= 0 ? n : null;
+    };
+    function applyPriceRange() {
+        state.priceMin = priceMinInput ? parsePrice(priceMinInput.value) : null;
+        state.priceMax = priceMaxInput ? parsePrice(priceMaxInput.value) : null;
+        resetToFirstPage();
+        renderProducts();
+    }
+    if (priceMinInput) priceMinInput.addEventListener('input', applyPriceRange);
+    if (priceMaxInput) priceMaxInput.addEventListener('input', applyPriceRange);
+
+    const clearPriceBtn = document.getElementById('clearPriceBtn');
+    if (clearPriceBtn) {
+        clearPriceBtn.addEventListener('click', () => {
+            if (priceMinInput) priceMinInput.value = '';
+            if (priceMaxInput) priceMaxInput.value = '';
+            applyPriceRange();
+        });
+    }
+
+    // Delegación de clics: paginación y últimas búsquedas
+    document.addEventListener('click', (e) => {
+        const pageBtn = e.target.closest('.page-btn[data-page]');
+        if (pageBtn && !pageBtn.disabled) {
+            window.goToPage(parseInt(pageBtn.dataset.page, 10));
+            return;
+        }
+        const recentBtn = e.target.closest('#quickSearchRow [data-q]');
+        if (recentBtn) {
+            window.quickSearch(recentBtn.dataset.q);
+            return;
+        }
+        if (e.target.closest('#clearRecentBtn')) {
+            localStorage.removeItem(RECENT_KEY);
+            renderRecentSearches();
+        }
+    });
 
     filterPills.forEach(pill => {
         pill.addEventListener('click', (e) => {
@@ -290,6 +521,7 @@ document.addEventListener('DOMContentLoaded', () => {
             filterPills.forEach(p => p.classList.remove('active'));
             e.currentTarget.classList.add('active');
             state.activeFilter = e.currentTarget.getAttribute('data-filter');
+            resetToFirstPage();
             renderProducts();
         });
     });
@@ -550,6 +782,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // INICIALIZACIÓN
     // ==========================================
+    renderRecentSearches();
     loadProducts();
     loadPokedex();
     renderStores();
